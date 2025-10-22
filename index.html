@@ -190,7 +190,7 @@
 
 <script>
   // Sustituye por la URL de tu Web App de Apps Script
-  const GAS_BASE_URL = 'https://script.google.com/macros/s/AKfycbz4DGkc1XSEcQYW3nlw7sXvmqxHDhh6t9qodJ-wkbmUsNC6Xccm3PVDQSOQQ83UO9eoFg/exec';
+  const GAS_BASE_URL = 'https://script.google.com/macros/s/AKfycbx9slB0-ygnTFfeBpNN_VF6yoMbvoPdE2K9wzuSyDPH8K5Og6tn84p6Dp7bMnuMXIZuMg/exec';
 
   const selProceso  = document.getElementById('selProceso');
   const tablaCard   = document.getElementById('tablaCard');
@@ -239,7 +239,7 @@
     try {
       const data = await fetchJSON(`${GAS_BASE_URL}?action=getProcesos`);
       if (!data.ok) throw new Error(data.error || 'Error');
-      selProceso.innerHTML = '<option value=\"\">— Elegir —</option>' +
+      selProceso.innerHTML = '<option value="">— Elegir —</option>' +
         data.procesos.map(p => `<option value="${escapeHtml(p)}">${escapeHtml(p)}</option>`).join('');
       setStatus('Selecciona un proceso para cargar el personal.');
     } catch (e) {
@@ -386,8 +386,10 @@
     }
   }
 
+  // ✅ Corregido: función sin caracteres inválidos
   function escapeHtml(s) {
-    return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',\"'\":'&#39;'}[m]));
+    const map = {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;', "'":'&#39;'};
+    return String(s).replace(/[&<>"']/g, ch => map[ch]);
   }
 
   // Eventos
