@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <title>Confirmación de Disponibilidad</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="data:,">
   <style>
     :root{
       --bg:#f7f9fc;
@@ -189,8 +190,13 @@
   </div>
 
 <script>
-  // Sustituye por la URL de tu Web App de Apps Script
-  const GAS_BASE_URL = 'https://script.google.com/macros/s/AKfycbwvXQ2yLFpPtHjlaXqSQEMKjlE724MaIvMGrL7zOBrJg29gkA-pHZ-pBr02x2MF7AYd0A/exec';
+  /**
+   * IMPORTANTE PARA CORS:
+   * Usa aquí la URL FINAL de googleusercontent.com (la que aparece tras el redirect del /exec).
+   * Ejemplo:
+   * const GAS_BASE_URL = 'https://script.googleusercontent.com/macros/echo?user_content_key=...&lib=...';
+   */
+  const GAS_BASE_URL = 'https://script.google.com/macros/s/AKfycbyCq9N9qA6rCuQLcfKZa7KsLKJ7YihBV_niS1hExrZPCpo8776H9gtEt3_Xp53aSlrWRA/exec';
 
   const selProceso  = document.getElementById('selProceso');
   const tablaCard   = document.getElementById('tablaCard');
@@ -362,7 +368,7 @@
       };
     });
 
-    return { jefe: '', proceso, vehiculosProceso: vehiculos, respuestas };
+    return { proceso, vehiculosProceso: vehiculos, respuestas };
   }
 
   async function enviar() {
@@ -386,7 +392,6 @@
     }
   }
 
-  // ✅ Corregido: función sin caracteres inválidos
   function escapeHtml(s) {
     const map = {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;', "'":'&#39;'};
     return String(s).replace(/[&<>"']/g, ch => map[ch]);
