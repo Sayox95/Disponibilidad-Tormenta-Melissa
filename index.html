@@ -2,407 +2,230 @@
 <html lang="es">
 <head>
   <meta charset="utf-8" />
-  <title>Confirmación de Disponibilidad</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="icon" href="data:,">
+  <title>Confirmación de disponibilidad</title>
   <style>
-    :root{
-      --bg:#f7f9fc;
-      --card:#ffffff;
-      --text:#1b1f24;
-      --muted:#6b7280;
-      --primary:#2563eb;
-      --primary-600:#1d4ed8;
-      --border:#e5e7eb;
-      --success:#0a7f2e;
-      --error:#b00020;
-      --radius:14px;
-    }
-    html,body{height:100%}
-    body {
-      margin: 0;
-      background: var(--bg);
-      color: var(--text);
-      font: 16px/1.5 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
-      padding: 24px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    .container{width: min(1100px, 100%);}
-    h1{
-      margin: 0 0 16px 0;
-      font-size: 28px;
-      letter-spacing:.2px;
-    }
-    .form-card{
-      background: var(--card);
-      border:1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 20px;
-      box-shadow: 0 6px 16px rgba(0,0,0,.04);
-      margin-bottom: 20px;
-    }
-    fieldset{
-      border:1px solid var(--border);
-      border-radius: 12px;
-      padding: 14px;
-      margin: 0 0 14px 0;
-    }
-    legend{
-      font-weight: 600;
-      padding: 0 8px;
-      color: var(--muted);
-      font-size: 13px;
-    }
-    .grid{
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-    }
-    label span{
-      display:block;
-      font-size: 13px;
-      color: var(--muted);
-      margin-bottom: 6px;
-    }
-    input[type="number"], select, textarea {
-      width: 100%;
-      box-sizing: border-box;
-      padding: 10px 12px;
-      border:1px solid var(--border);
-      border-radius: 10px;
-      background: #fff;
-      outline: none;
-      transition: box-shadow .15s ease, border-color .15s ease;
-      font-size: 15px;
-    }
-    input:focus, select:focus, textarea:focus{
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(37,99,235,.12);
-    }
-    .actions{
-      display:flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      align-items: center;
-      margin-top: 8px;
-    }
-    .btn{
-      appearance: none;
-      cursor: pointer;
-      border: 1px solid var(--primary);
-      background: var(--primary);
-      color:#fff;
-      border-radius: 10px;
-      padding: 10px 16px;
-      font-weight: 600;
-      transition: transform .02s ease, background .15s ease, box-shadow .15s ease;
-    }
-    .btn.secondary{
-      background: #fff;
-      color: var(--primary);
-      border-color: var(--primary);
-    }
-    .btn:hover{ background: var(--primary-600); }
-    .btn:active{ transform: translateY(1px); }
-    .muted{ color: var(--muted); font-size: 13px; }
-    .ok{ color: var(--success); }
-    .error{ color: var(--error); }
-
-    /* Tabla con apariencia de formulario */
-    table{ width:100%; border-collapse: separate; border-spacing:0; margin-top: 6px; }
-    thead th{
-      text-align:left;
-      font-size:13px;
-      color:#374151;
-      background: #f3f4f6;
-      position: sticky;
-      top: 0;
-      z-index: 1;
-    }
-    th, td{
-      border-top:1px solid var(--border);
-      border-left:1px solid var(--border);
-      padding: 10px;
-      vertical-align: middle;
-    }
-    th:last-child, td:last-child{ border-right:1px solid var(--border); }
-    tr:last-child td{ border-bottom:1px solid var(--border); }
-    tbody tr:nth-child(odd){ background:#fafafa; }
-    textarea{ min-height: 38px; resize: vertical; }
-
-    .hidden{ display:none !important; }
+    :root { font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif; }
+    body { margin: 0; padding: 24px; background:#f7f7fb; color:#1f2937; }
+    h1 { margin: 0 0 16px 0; font-size: 22px; }
+    .card { background:#fff; border-radius:16px; box-shadow: 0 6px 24px rgba(0,0,0,.06); padding: 20px; margin-bottom: 20px; }
+    label { display:block; margin: 10px 0 4px; font-weight:600; }
+    select, input[type="number"], input[type="text"] { width: 100%; padding: 10px 12px; border:1px solid #d1d5db; border-radius:10px; font-size:14px; }
+    table { width:100%; border-collapse: collapse; margin-top: 12px; }
+    th, td { padding: 10px; border-bottom: 1px solid #eee; text-align:left; vertical-align: middle;}
+    th { background:#fafafa; position: sticky; top:0; z-index:1; }
+    .controls { display:flex; gap:12px; flex-wrap: wrap; }
+    .pill { display:inline-flex; align-items:center; gap:8px; padding:8px 12px; border:1px solid #e5e7eb; border-radius:999px; background:#fff; }
+    .btn { cursor:pointer; border:0; border-radius:12px; padding:12px 16px; font-weight:600; }
+    .btn-primary { background:#111827; color:white; }
+    .btn-ghost { background:#fff; border:1px solid #d1d5db; }
+    .footer { display:flex; gap:12px; justify-content:flex-end; margin-top:16px; }
+    .muted { color:#6b7280; font-size:12px; }
+    .hidden { display:none; }
+    .table-wrap { max-height: 60vh; overflow:auto; border: 1px solid #eee; border-radius: 12px; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Confirmación de disponibilidad</h1>
+  <h1>Confirmación de disponibilidad</h1>
 
-    <form class="form-card" onsubmit="return false;">
-      <fieldset>
-        <legend>Datos del proceso</legend>
-        <div class="grid">
-          <label>
-            <span>Proceso</span>
-            <select id="selProceso"></select>
-          </label>
-          <label>
-            <span>Vehículos asignados al proceso</span>
-            <input id="inpVehiculos" type="number" min="0" step="1" value="0" />
-          </label>
-        </div>
-        <div class="actions">
-          <span id="status" class="muted"></span>
-        </div>
-      </fieldset>
-    </form>
-
-    <div id="tablaCard" class="form-card hidden">
-      <fieldset>
-        <legend>Checklist por persona</legend>
-        <div class="actions">
-          <strong>Personal del proceso</strong>
-          <span id="countLabel" class="muted"></span>
-        </div>
-        <table id="tabla">
-          <thead>
-            <tr>
-              <th>Nombre</th>
-              <th>Cargo</th>
-              <th>Subproceso</th>
-              <th>Exp. distribución</th>
-              <th>Vehículo asignado</th>
-              <th>Equipo (Desktop/Laptop)</th>
-              <th>¿Tiene VPN?</th>
-              <th>VPN funcional</th>
-              <th>Observaciones</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-        <div class="actions" style="margin-top:12px;">
-          <button id="btnEnviar" class="btn" type="button">Enviar respuestas</button>
-          <span id="sendStatus" class="muted"></span>
-        </div>
-      </fieldset>
+  <div class="card">
+    <p class="muted">1) Seleccione el <b>Proceso</b>, 2) complete la cantidad de <b>vehículos asignados</b> del proceso, 3) marque la información por persona y 4) envíe.</p>
+    <div class="controls">
+      <div style="min-width:260px; flex:1 1 260px;">
+        <label for="procesoSelect">Proceso</label>
+        <select id="procesoSelect">
+          <option value="">-- Seleccione --</option>
+        </select>
+      </div>
+      <div style="min-width:220px;">
+        <label for="vehiculosProceso">Vehículos asignados al proceso</label>
+        <input id="vehiculosProceso" type="number" min="0" step="1" placeholder="0" />
+      </div>
     </div>
   </div>
 
-<script>
-  /**
-   * IMPORTANTE PARA CORS:
-   * Usa aquí la URL FINAL de googleusercontent.com (la que aparece tras el redirect del /exec).
-   * Ejemplo:
-   * const GAS_BASE_URL = 'https://script.googleusercontent.com/macros/echo?user_content_key=AehSKLj7i_lK0T73wIhEQQuBqd4I8fElKS2lqclBPfEzhxr7cmTuuu0MHe76SI-WO-sy6KWaD5kNQ8UbFF7-jIh5MbxRPveklStmHk7CUVbOWSjCtWI-WFJKaPm-o5MsqRUhxR3qopE3CbyRqHzHOyMumAQU4kTcFmpx-FBUkkjrjeyc_y0tr-UmfpnK0tY1XKiveMMD8OpXPWPyJy7ZcWbfGa7i3xUV23NIgLld-kSYnDc5eArjh4E4iCuoMjxs6SehDFWCCFL11xTARY4FZ9MTls70fWHPkpmalp1HnTQe&lib=M39pXE2ACc0LsW36ot9CCa2ku_3-CfLej';
-   */
-  const GAS_BASE_URL = 'https://script.google.com/macros/s/AKfycbyCq9N9qA6rCuQLcfKZa7KsLKJ7YihBV_niS1hExrZPCpo8776H9gtEt3_Xp53aSlrWRA/exec';
+  <div class="card">
+    <div class="controls" style="justify-content: space-between;">
+      <div class="pill"><span>Filtro rápido:</span><input id="filtro" type="text" placeholder="Buscar por nombre/cargo..." /></div>
+      <div class="muted" id="contador">0 seleccionados</div>
+    </div>
+    <div class="table-wrap">
+      <table id="tabla">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Cargo</th>
+            <th>Experiencia en distribución</th>
+            <th>Vehículo asignado</th>
+            <th>Computadora</th>
+            <th>VPN</th>
+            <th>VPN funcional</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div class="footer">
+      <button class="btn btn-ghost" id="btnLimpiar">Limpiar</button>
+      <button class="btn btn-primary" id="btnEnviar">Enviar</button>
+    </div>
+    <div class="muted" id="estado"></div>
+  </div>
 
-  const selProceso  = document.getElementById('selProceso');
-  const tablaCard   = document.getElementById('tablaCard');
-  const tbody       = document.querySelector('#tabla tbody');
-  const statusEl    = document.getElementById('status');
-  const sendStatus  = document.getElementById('sendStatus');
-  const countLabel  = document.getElementById('countLabel');
-  const inpVehiculos= document.getElementById('inpVehiculos');
-  const btnEnviar   = document.getElementById('btnEnviar');
+  <script>
+    // ⬇️ Reemplazar con la URL del WebApp de Apps Script desplegado (acción "Ejecutar la aplicación como: Yo" y "Quién tiene acceso: Cualquiera con el enlace")
+    const GAS_BASE_URL = "https://script.google.com/macros/s/AKfycbzxr_UF2oJ9TBDDFslZOKB-7L2cN36e-Z-pYlX4Veo5sRJTyrXfJ1yagER-Pyr4VVsduw/exec";
 
-  function setStatus(msg, cls='') {
-    statusEl.className = 'muted ' + cls;
-    statusEl.textContent = msg || '';
-  }
-  function setSendStatus(msg, cls='') {
-    sendStatus.className = 'muted ' + cls;
-    sendStatus.textContent = msg || '';
-  }
+    const procesoSelect = document.getElementById('procesoSelect');
+    const vehiculosProceso = document.getElementById('vehiculosProceso');
+    const tbody = document.querySelector('#tabla tbody');
+    const filtro = document.getElementById('filtro');
+    const btnLimpiar = document.getElementById('btnLimpiar');
+    const btnEnviar = document.getElementById('btnEnviar');
+    const estado = document.getElementById('estado');
+    const contador = document.getElementById('contador');
 
-  async function fetchJSON(url) {
-    const res = await fetch(url, { method: 'GET' });
-    return res.json();
-  }
-  async function postJSON(url, data) {
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    });
-    return res.json();
-  }
+    const state = { personal: [], rows: [] };
 
-  function makeYesNoSelect() {
-    const sel = document.createElement('select');
-    sel.innerHTML = '<option value="no">No</option><option value="si">Sí</option>';
-    return sel;
-  }
-  function makeEquipoSelect() {
-    const sel = document.createElement('select');
-    sel.innerHTML = '<option value="">— Seleccionar —</option><option value="Desktop">Desktop</option><option value="Laptop">Laptop</option>';
-    return sel;
-  }
-
-  async function loadProcesos() {
-    setStatus('Cargando procesos…');
-    try {
-      const data = await fetchJSON(`${GAS_BASE_URL}?action=getProcesos`);
-      if (!data.ok) throw new Error(data.error || 'Error');
-      selProceso.innerHTML = '<option value="">— Elegir —</option>' +
-        data.procesos.map(p => `<option value="${escapeHtml(p)}">${escapeHtml(p)}</option>`).join('');
-      setStatus('Selecciona un proceso para cargar el personal.');
-    } catch (e) {
-      console.error(e);
-      setStatus('No se pudieron cargar los procesos', 'error');
+    function htmlToElement(html) {
+      const template = document.createElement('template');
+      template.innerHTML = html.trim();
+      return template.content.firstChild;
     }
-  }
 
-  async function loadPersonal() {
-    const proceso = selProceso.value;
-    const vehiculos = inpVehiculos.value || 0;
-    if (!proceso) {
-      setStatus('Selecciona un proceso', 'error');
-      return;
+    function updateContador() {
+      const totalMarcados = state.rows.filter(r => 
+        r.querySelector('input[name="exp"]').checked ||
+        r.querySelector('input[name="veh"]').checked ||
+        r.querySelector('select[name="pc"]').value ||
+        r.querySelector('input[name="vpn"]').checked ||
+        r.querySelector('input[name="vpnOk"]').checked
+      ).length;
+      contador.textContent = totalMarcados + " filas con datos";
     }
-    setStatus('Cargando personal…');
-    try {
-      const data = await fetchJSON(`${GAS_BASE_URL}?action=getPersonal&proceso=${encodeURIComponent(proceso)}`);
-      if (!data.ok) throw new Error(data.error || 'Error');
-      renderTabla(data.personal);
-      tablaCard.classList.remove('hidden');
-      countLabel.textContent = `${data.personal.length} personas • Vehículos declarados: ${vehiculos}`;
-      setStatus('Personal cargado.', 'ok');
-    } catch (e) {
-      console.error(e);
-      setStatus('No se pudo cargar el personal', 'error');
-    }
-  }
 
-  function renderTabla(personal) {
-    tbody.innerHTML = '';
-    personal.forEach((p) => {
-      const tr = document.createElement('tr');
-
-      // Celdas fijas
-      tr.appendChild(tdText(p.nombre));
-      tr.appendChild(tdText(p.cargo));
-      tr.appendChild(tdText(p.subproceso));
-
-      // Exp. distribución (checkbox)
-      const tdExp = document.createElement('td');
-      const chkExp = document.createElement('input');
-      chkExp.type = 'checkbox';
-      chkExp.title = 'Tiene experiencia en distribución';
-      tdExp.appendChild(chkExp);
-      tr.appendChild(tdExp);
-
-      // Vehículo asignado (checkbox)
-      const tdVeh = document.createElement('td');
-      const chkVeh = document.createElement('input');
-      chkVeh.type = 'checkbox';
-      chkVeh.title = 'Vehículo asignado';
-      tdVeh.appendChild(chkVeh);
-      tr.appendChild(tdVeh);
-
-      // Equipo (Desktop/Laptop)
-      const tdEquipo = document.createElement('td');
-      const selEquipo = makeEquipoSelect();
-      tdEquipo.appendChild(selEquipo);
-      tr.appendChild(tdEquipo);
-
-      // VPN
-      const tdVpn = document.createElement('td');
-      const selVpn = makeYesNoSelect();
-      tdVpn.appendChild(selVpn);
-      tr.appendChild(tdVpn);
-
-      const tdVpnFunc = document.createElement('td');
-      const selFunc = makeYesNoSelect();
-      selFunc.disabled = true;
-      tdVpnFunc.appendChild(selFunc);
-      tr.appendChild(tdVpnFunc);
-
-      selVpn.addEventListener('change', () => {
-        selFunc.disabled = selVpn.value !== 'si';
-        if (selFunc.disabled) selFunc.value = 'no';
+    function renderRows(data) {
+      tbody.innerHTML = "";
+      state.rows = [];
+      data.forEach(p => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${p.nombre}</td>
+          <td>${p.cargo || ""}</td>
+          <td><input type="checkbox" name="exp" /></td>
+          <td><input type="checkbox" name="veh" /></td>
+          <td>
+            <select name="pc">
+              <option value="">--</option>
+              <option value="Desktop">Desktop</option>
+              <option value="Portátil">Portátil</option>
+            </select>
+          </td>
+          <td><input type="checkbox" name="vpn" /></td>
+          <td><input type="checkbox" name="vpnOk" disabled /></td>
+        `;
+        const vpn = tr.querySelector('input[name="vpn"]');
+        const vpnOk = tr.querySelector('input[name="vpnOk"]');
+        vpn.addEventListener('change', () => {
+          vpnOk.disabled = !vpn.checked;
+          if (!vpn.checked) vpnOk.checked = false;
+          updateContador();
+        });
+        tr.querySelectorAll('input,select').forEach(el => el.addEventListener('change', updateContador));
+        tbody.appendChild(tr);
+        state.rows.push(tr);
       });
-
-      // Observaciones
-      const tdObs = document.createElement('td');
-      const tx = document.createElement('textarea');
-      tx.placeholder = 'Observaciones (opcional)';
-      tdObs.appendChild(tx);
-      tr.appendChild(tdObs);
-
-      tr.dataset.meta = JSON.stringify(p);
-      tbody.appendChild(tr);
-    });
-  }
-
-  function tdText(text){
-    const td = document.createElement('td');
-    td.textContent = text;
-    return td;
-  }
-
-  function collectPayload() {
-    const proceso   = selProceso.value;
-    const vehiculos = Number(inpVehiculos.value || 0);
-
-    const respuestas = Array.from(tbody.querySelectorAll('tr')).map(tr => {
-      const meta = JSON.parse(tr.dataset.meta);
-      const [chkExp, chkVeh] = tr.querySelectorAll('input[type="checkbox"]');
-      const selects = tr.querySelectorAll('select');
-      const selEquipo = selects[0];
-      const selVpn    = selects[1];
-      const selFunc   = selects[2];
-      const obs = tr.querySelector('textarea').value.trim();
-
-      return {
-        nombre: meta.nombre,
-        cargo: meta.cargo,
-        subproceso: meta.subproceso,
-        experienciaDistribucion: chkExp.checked,
-        vehiculoAsignado: chkVeh.checked,
-        computadora: selEquipo.value || '',
-        vpnTiene: selVpn.value === 'si',
-        vpnFuncional: selVpn.value === 'si' ? (selFunc.value === 'si') : false,
-        observaciones: obs
-      };
-    });
-
-    return { proceso, vehiculosProceso: vehiculos, respuestas };
-  }
-
-  async function enviar() {
-    setSendStatus('Enviando…');
-    try {
-      const payload = collectPayload();
-      if (!payload.proceso) {
-        setSendStatus('Selecciona un proceso.', 'error');
-        return;
-      }
-      if (!payload.respuestas.length) {
-        setSendStatus('No hay filas para enviar.', 'error');
-        return;
-      }
-      const data = await postJSON(GAS_BASE_URL, payload);
-      if (!data.ok) throw new Error(data.error || 'Error');
-      setSendStatus(`Listo. Se guardaron ${data.saved} filas.`, 'ok');
-    } catch (e) {
-      console.error(e);
-      setSendStatus('Error al enviar. Revisa la consola.', 'error');
+      updateContador();
     }
-  }
 
-  function escapeHtml(s) {
-    const map = {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;', "'":'&#39;'};
-    return String(s).replace(/[&<>"']/g, ch => map[ch]);
-  }
+    async function cargarProcesos() {
+      try {
+        const url = GAS_BASE_URL + "?action=procesos";
+        const res = await fetch(url);
+        const { ok, data, error } = await res.json();
+        if (!ok) throw new Error(error || "Error consultando procesos");
+        data.sort().forEach(p => {
+          const opt = htmlToElement(`<option>${p}</option>`);
+          procesoSelect.appendChild(opt);
+        });
+      } catch (e) {
+        estado.textContent = "No se pudieron cargar los procesos: " + e.message;
+      }
+    }
 
-  // Eventos
-  selProceso.addEventListener('change', loadPersonal);
-  btnEnviar.addEventListener('click', enviar);
+    async function cargarPersonalPorProceso(proceso) {
+      try {
+        estado.textContent = "Cargando personal…";
+        const url = GAS_BASE_URL + "?action=personal&proceso=" + encodeURIComponent(proceso);
+        const res = await fetch(url);
+        const { ok, data, error } = await res.json();
+        if (!ok) throw new Error(error || "Error consultando personal");
+        state.personal = data;
+        renderRows(data);
+        estado.textContent = "";
+      } catch (e) {
+        estado.textContent = "Error: " + e.message;
+      }
+    }
 
-  // Init
-  loadProcesos();
-</script>
+    procesoSelect.addEventListener('change', () => {
+      const p = procesoSelect.value;
+      if (p) cargarPersonalPorProceso(p);
+      tbody.innerHTML = "";
+    });
+
+    filtro.addEventListener('input', () => {
+      const q = filtro.value.toLowerCase();
+      const filtrados = state.personal.filter(p => 
+        (p.nombre || "").toLowerCase().includes(q) || (p.cargo || "").toLowerCase().includes(q)
+      );
+      renderRows(filtrados);
+    });
+
+    btnLimpiar.addEventListener('click', () => {
+      vehiculosProceso.value = "";
+      filtro.value = "";
+      renderRows(state.personal);
+      estado.textContent = "";
+    });
+
+    btnEnviar.addEventListener('click', async () => {
+      const proceso = procesoSelect.value;
+      if (!proceso) { alert("Seleccione un proceso"); return; }
+      const veh = Number(vehiculosProceso.value || 0);
+      const rows = Array.from(tbody.querySelectorAll('tr')).map((tr, idx) => {
+        const nombre = tr.children[0].textContent.trim();
+        const cargo = tr.children[1].textContent.trim();
+        return {
+          nombre, cargo, idx,
+          experienciaDistribucion: tr.querySelector('input[name="exp"]').checked,
+          vehiculoAsignado: tr.querySelector('input[name="veh"]').checked,
+          computadora: tr.querySelector('select[name="pc"]').value,
+          vpn: tr.querySelector('input[name="vpn"]').checked,
+          vpnFuncional: tr.querySelector('input[name="vpnOk"]').checked,
+        };
+      });
+      const payload = { proceso, vehiculosAsignadosProceso: veh, entries: rows };
+      try {
+        estado.textContent = "Enviando…";
+        const res = await fetch(GAS_BASE_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const json = await res.json();
+        if (json.ok) {
+          estado.textContent = "¡Enviado correctamente! Código: " + json.id;
+        } else {
+          throw new Error(json.error || "Error desconocido");
+        }
+      } catch (e) {
+        estado.textContent = "No se pudo enviar: " + e.message;
+      }
+    });
+
+    // Inicia
+    cargarProcesos();
+  </script>
 </body>
 </html>
