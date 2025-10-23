@@ -5,76 +5,132 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Confirmación de disponibilidad</title>
   <style>
-    :root { font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif; }
-    body { margin: 0; padding: 24px; background:#f7f7fb; color:#1f2937; }
-    h1 { margin: 0 0 16px 0; font-size: 22px; }
-    .card { background:#fff; border-radius:16px; box-shadow: 0 6px 24px rgba(0,0,0,.06); padding: 20px; margin-bottom: 20px; }
-    label { display:block; margin: 10px 0 4px; font-weight:600; }
-    select, input[type="number"], input[type="text"] { width: 100%; padding: 10px 12px; border:1px solid #d1d5db; border-radius:10px; font-size:14px; }
-    table { width:100%; border-collapse: collapse; margin-top: 12px; }
-    th, td { padding: 10px; border-bottom: 1px solid #eee; text-align:left; vertical-align: middle;}
-    th { background:#fafafa; position: sticky; top:0; z-index:1; }
+    :root { --bg:#0b1020; --card:#0f172a; --muted:#94a3b8; --text:#e5e7eb; --primary:#4f46e5; --primary-700:#4338ca; }
+    * { box-sizing: border-box; }
+    body { margin:0; background:linear-gradient(180deg, #0b1020, #0b1020 40%, #0b132a); color:var(--text); font:14px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif; }
+    .container { max-width: 1100px; margin: 30px auto; padding: 0 16px; }
+    h1 { margin:0 0 8px; font-size: 22px; font-weight: 700; letter-spacing:.2px; }
+    .sub { color: var(--muted); margin-bottom: 18px; }
+    .card { background:var(--card); border:1px solid rgba(255,255,255,.06); border-radius:16px; padding:18px; box-shadow: 0 10px 30px rgba(0,0,0,.25); margin-bottom: 16px; }
+    label { display:block; margin: 6px 0 6px; font-weight:600; }
+    select, input[type="number"], input[type="text"] {
+      width: 100%; padding: 10px 12px; border:1px solid rgba(255,255,255,.12); background:#0b132a; color:var(--text);
+      border-radius:12px; outline: none;
+    }
+    select:focus, input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79,70,229,.18); }
     .controls { display:flex; gap:12px; flex-wrap: wrap; }
-    .pill { display:inline-flex; align-items:center; gap:8px; padding:8px 12px; border:1px solid #e5e7eb; border-radius:999px; background:#fff; }
-    .btn { cursor:pointer; border:0; border-radius:12px; padding:12px 16px; font-weight:600; }
-    .btn-primary { background:#111827; color:white; }
-    .btn-ghost { background:#fff; border:1px solid #d1d5db; }
+    .control { min-width: 260px; flex: 1 1 260px; }
+    .btn { cursor:pointer; border:0; border-radius:12px; padding:12px 16px; font-weight:700; transition: transform .04s ease, background .2s ease, opacity .2s;
+      background: var(--primary); color:white; }
+    .btn:hover { background: var(--primary-700); }
+    .btn:active { transform: translateY(1px); }
+    .btn-ghost { background:transparent; border:1px solid rgba(255,255,255,.14); color: var(--text); }
     .footer { display:flex; gap:12px; justify-content:flex-end; margin-top:16px; }
-    .muted { color:#6b7280; font-size:12px; }
-    .hidden { display:none; }
-    .table-wrap { max-height: 60vh; overflow:auto; border: 1px solid #eee; border-radius: 12px; }
+    .muted { color: var(--muted); font-size:12px; }
+    .table-wrap { max-height: 60vh; overflow:auto; border: 1px solid rgba(255,255,255,.06); border-radius: 12px; }
+    table { width:100%; border-collapse: collapse; }
+    th, td { padding: 10px; border-bottom: 1px solid rgba(255,255,255,.06); text-align:left; vertical-align: middle; }
+    th { position: sticky; top:0; z-index:1; background: rgba(15,23,42,.98); backdrop-filter: blur(6px); }
+    .row-note { width: 220px; }
+
+    /* Overlay + spinners */
+    .overlay { position: fixed; inset:0; background: rgba(0,0,0,.56); display:none; align-items:center; justify-content:center; z-index: 50; }
+    .overlay.show { display:flex; }
+    .overlay-box { display:flex; align-items:center; gap:14px; background: rgba(15,23,42,.92); border:1px solid rgba(255,255,255,.08); padding:18px 20px; border-radius:14px; box-shadow: 0 10px 30px rgba(0,0,0,.35); }
+    .spinner { width:42px; height:42px; border-radius:50%; border:3px solid rgba(255,255,255,.15); border-top-color: var(--primary); animation: spin 1s linear infinite; }
+    .spinner-sm { width:22px; height:22px; border-radius:50%; border:2px solid rgba(255,255,255,.15); border-top-color: var(--primary); animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .section-loading { display:flex; align-items:center; gap:10px; color:var(--muted); padding:8px 0; }
+    .toolbar { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:8px; }
+    .search { display:flex; align-items:center; gap:8px; padding:8px 12px; border:1px solid rgba(255,255,255,.12); border-radius:999px; background:#0b132a; }
+    .search input { border:0; background:transparent; outline:none; color:var(--text); width:220px; }
+
+    /* Toasts */
+    .toast-wrap { position: fixed; right:16px; bottom:16px; display:flex; flex-direction:column; gap:10px; z-index:60; }
+    .toast { padding:12px 14px; border-radius:12px; box-shadow: 0 8px 24px rgba(0,0,0,.35); display:flex; align-items:flex-start; gap:10px; max-width: 360px; }
+    .toast.ok { background: rgba(16,185,129,.12); border:1px solid rgba(16,185,129,.35); }
+    .toast.err { background: rgba(239,68,68,.12); border:1px solid rgba(239,68,68,.35); }
+    .toast .title { font-weight:700; }
+    .toast .msg { font-size: 12px; color: var(--muted); }
+    .toast .dot { width:10px; height:10px; border-radius:50%; margin-top:4px; }
+    .toast.ok .dot { background: #10b981; } .toast.err .dot { background: #ef4444; }
   </style>
 </head>
 <body>
-  <h1>Confirmación de disponibilidad</h1>
-
-  <div class="card">
-    <p class="muted">1) Seleccione el <b>Proceso</b>, 2) complete la cantidad de <b>vehículos asignados</b> del proceso, 3) marque la información por persona y 4) envíe.</p>
-    <div class="controls">
-      <div style="min-width:260px; flex:1 1 260px;">
-        <label for="procesoSelect">Proceso</label>
-        <select id="procesoSelect">
-          <option value="">-- Seleccione --</option>
-        </select>
-      </div>
-      <div style="min-width:220px;">
-        <label for="vehiculosProceso">Vehículos asignados al proceso</label>
-        <input id="vehiculosProceso" type="number" min="0" step="1" placeholder="0" />
-      </div>
+  <!-- Overlay central con mensaje dinámico -->
+  <div class="overlay" id="overlay">
+    <div class="overlay-box">
+      <div class="spinner" aria-hidden="true"></div>
+      <div id="overlayText" aria-live="polite">Cargando información…</div>
     </div>
   </div>
 
-  <div class="card">
-    <div class="controls" style="justify-content: space-between;">
-      <div class="pill"><span>Filtro rápido:</span><input id="filtro" type="text" placeholder="Buscar por nombre/cargo..." /></div>
-      <div class="muted" id="contador">0 seleccionados</div>
+  <!-- Toasts -->
+  <div class="toast-wrap" id="toasts"></div>
+
+  <div class="container">
+    <h1>Confirmación de disponibilidad</h1>
+    <div class="sub">Complete la información por proceso y por colaborador. El envío guardará cada fila en Google Sheets.</div>
+
+    <div class="card">
+      <div class="controls">
+        <div class="control">
+          <label for="procesoSelect">Proceso</label>
+          <select id="procesoSelect">
+            <option value="">-- Seleccione --</option>
+          </select>
+        </div>
+        <div class="control" style="max-width:260px;">
+          <label for="vehiculosProceso">Vehículos asignados al proceso</label>
+          <input id="vehiculosProceso" type="number" min="0" step="1" placeholder="0" />
+        </div>
+      </div>
+      <div class="muted" id="estadoTop"></div>
     </div>
-    <div class="table-wrap">
-      <table id="tabla">
-        <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Cargo</th>
-            <th>Experiencia en distribución</th>
-            <th>Vehículo asignado</th>
-            <th>Computadora</th>
-            <th>VPN</th>
-            <th>VPN funcional</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+
+    <div class="card">
+      <div class="toolbar">
+        <div class="search">
+          <span>🔎</span>
+          <input id="filtro" type="text" placeholder="Buscar por nombre/cargo..." />
+        </div>
+        <div class="muted" id="contador">0 filas con datos</div>
+      </div>
+
+      <div id="sectionLoading" class="section-loading" style="display:none;">
+        <div class="spinner-sm" aria-hidden="true"></div><span>Cargando colaboradores…</span>
+      </div>
+
+      <div class="table-wrap">
+        <table id="tabla">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Cargo</th>
+              <th>Experiencia en distribución</th>
+              <th>Vehículo asignado</th>
+              <th>Computadora</th>
+              <th>VPN</th>
+              <th>VPN funcional</th>
+              <th>Observaciones</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <div class="footer">
+        <button class="btn-ghost btn" id="btnLimpiar">Limpiar</button>
+        <button class="btn" id="btnEnviar">Enviar</button>
+      </div>
+      <div class="muted" id="estado"></div>
     </div>
-    <div class="footer">
-      <button class="btn btn-ghost" id="btnLimpiar">Limpiar</button>
-      <button class="btn btn-primary" id="btnEnviar">Enviar</button>
-    </div>
-    <div class="muted" id="estado"></div>
   </div>
 
   <script>
-    // ⬇️ Reemplazar con la URL del WebApp de Apps Script desplegado (acción "Ejecutar la aplicación como: Yo" y "Quién tiene acceso: Cualquiera con el enlace")
-    const GAS_BASE_URL = "https://script.google.com/macros/s/AKfycbzoV08YF1e2unD3eXq8dfRKE6l_Xdp7CCnQB0ISojNRI4KevTYNeLBSD8txspCpgy5v6w/exec";
+    // ⬇️ Pega aquí tu URL del Web App
+    const GAS_BASE_URL = "https://script.google.com/macros/s/AKfycbyaPCdh7SZ86VBXA5coGnbXbMnACCo4iirlPPVCxq41wKuZqcl1M_3Wc66EtE1GkQ76gA/exec";
 
     const procesoSelect = document.getElementById('procesoSelect');
     const vehiculosProceso = document.getElementById('vehiculosProceso');
@@ -83,23 +139,41 @@
     const btnLimpiar = document.getElementById('btnLimpiar');
     const btnEnviar = document.getElementById('btnEnviar');
     const estado = document.getElementById('estado');
+    const estadoTop = document.getElementById('estadoTop');
     const contador = document.getElementById('contador');
+
+    const overlay = document.getElementById('overlay');
+    const overlayText = document.getElementById('overlayText');
+    const sectionLoading = document.getElementById('sectionLoading');
+    const toasts = document.getElementById('toasts');
 
     const state = { personal: [], rows: [] };
 
-    function htmlToElement(html) {
-      const template = document.createElement('template');
-      template.innerHTML = html.trim();
-      return template.content.firstChild;
+    // Helpers UI
+    function showOverlay(text) {
+      if (text) overlayText.textContent = text;
+      overlay.classList.add('show');
     }
+    function hideOverlay() {
+      overlay.classList.remove('show');
+    }
+    function showToast(kind, title, msg) {
+      const el = document.createElement('div');
+      el.className = 'toast ' + (kind === 'ok' ? 'ok' : 'err');
+      el.innerHTML = '<div class="dot"></div><div><div class="title">'+title+'</div><div class="msg">'+(msg||'')+'</div></div>';
+      toasts.appendChild(el);
+      setTimeout(() => { el.style.opacity = '0'; setTimeout(() => toasts.removeChild(el), 250); }, 3500);
+    }
+    function boolToSiNo(v){ return v ? "Sí" : "No"; }
 
     function updateContador() {
-      const totalMarcados = state.rows.filter(r => 
+      const totalMarcados = state.rows.filter(r =>
         r.querySelector('input[name="exp"]').checked ||
         r.querySelector('input[name="veh"]').checked ||
         r.querySelector('select[name="pc"]').value ||
         r.querySelector('input[name="vpn"]').checked ||
-        r.querySelector('input[name="vpnOk"]').checked
+        r.querySelector('input[name="vpnOk"]').checked ||
+        r.querySelector('input[name="obs"]').value.trim() !== ""
       ).length;
       contador.textContent = totalMarcados + " filas con datos";
     }
@@ -123,6 +197,7 @@
           </td>
           <td><input type="checkbox" name="vpn" /></td>
           <td><input type="checkbox" name="vpnOk" disabled /></td>
+          <td><input type="text" name="obs" placeholder="Notas u observaciones..." class="row-note" /></td>
         `;
         const vpn = tr.querySelector('input[name="vpn"]');
         const vpnOk = tr.querySelector('input[name="vpnOk"]');
@@ -131,52 +206,62 @@
           if (!vpn.checked) vpnOk.checked = false;
           updateContador();
         });
-        tr.querySelectorAll('input,select').forEach(el => el.addEventListener('change', updateContador));
+        tr.querySelectorAll('input,select').forEach(el => el.addEventListener('input', updateContador));
         tbody.appendChild(tr);
         state.rows.push(tr);
       });
       updateContador();
     }
 
+    // Carga inicial de procesos (overlay "Cargando información…")
     async function cargarProcesos() {
       try {
-        const url = GAS_BASE_URL + "?action=procesos";
-        const res = await fetch(url);
-        const { ok, data, error } = await res.json();
-        if (!ok) throw new Error(error || "Error consultando procesos");
-        data.sort().forEach(p => {
-          const opt = htmlToElement(`<option>${p}</option>`);
+        showOverlay("Cargando información…");
+        estadoTop.textContent = "";
+        const res = await fetch(GAS_BASE_URL + "?action=procesos");
+        const json = await res.json();
+        if (!json.ok) throw new Error(json.error || "Error consultando procesos");
+        json.data.forEach(p => {
+          const opt = document.createElement('option');
+          opt.value = p; opt.textContent = p;
           procesoSelect.appendChild(opt);
         });
       } catch (e) {
-        estado.textContent = "No se pudieron cargar los procesos: " + e.message;
+        estadoTop.textContent = "No se pudieron cargar los procesos.";
+        showToast('err', 'Error al cargar procesos', e.message);
+      } finally {
+        hideOverlay();
       }
     }
 
+    // Cargar colaboradores por proceso (spinner de sección)
     async function cargarPersonalPorProceso(proceso) {
       try {
-        estado.textContent = "Cargando personal…";
-        const url = GAS_BASE_URL + "?action=personal&proceso=" + encodeURIComponent(proceso);
-        const res = await fetch(url);
-        const { ok, data, error } = await res.json();
-        if (!ok) throw new Error(error || "Error consultando personal");
-        state.personal = data;
-        renderRows(data);
+        sectionLoading.style.display = 'flex';
         estado.textContent = "";
+        const res = await fetch(GAS_BASE_URL + "?action=personal&proceso=" + encodeURIComponent(proceso));
+        const json = await res.json();
+        if (!json.ok) throw new Error(json.error || "Error consultando personal");
+        state.personal = json.data || [];
+        renderRows(state.personal);
       } catch (e) {
         estado.textContent = "Error: " + e.message;
+        showToast('err', 'Error al cargar colaboradores', e.message);
+      } finally {
+        sectionLoading.style.display = 'none';
       }
     }
 
+    // Eventos UI
     procesoSelect.addEventListener('change', () => {
       const p = procesoSelect.value;
       if (p) cargarPersonalPorProceso(p);
-      tbody.innerHTML = "";
+      else { state.personal = []; renderRows([]); }
     });
 
     filtro.addEventListener('input', () => {
       const q = filtro.value.toLowerCase();
-      const filtrados = state.personal.filter(p => 
+      const filtrados = state.personal.filter(p =>
         (p.nombre || "").toLowerCase().includes(q) || (p.cargo || "").toLowerCase().includes(q)
       );
       renderRows(filtrados);
@@ -187,44 +272,70 @@
       filtro.value = "";
       renderRows(state.personal);
       estado.textContent = "";
+      showToast('ok', 'Formulario restablecido', 'Se limpiaron los campos visibles.');
     });
 
+    // Enviar (overlay "Enviando información…")
     btnEnviar.addEventListener('click', async () => {
       const proceso = procesoSelect.value;
       if (!proceso) { alert("Seleccione un proceso"); return; }
+
       const veh = Number(vehiculosProceso.value || 0);
-      const rows = Array.from(tbody.querySelectorAll('tr')).map((tr, idx) => {
+      const selected = Array.from(tbody.querySelectorAll('tr')).map((tr) => {
         const nombre = tr.children[0].textContent.trim();
         const cargo = tr.children[1].textContent.trim();
+        const exp = tr.querySelector('input[name="exp"]').checked;
+        const vehAsig = tr.querySelector('input[name="veh"]').checked;
+        const pc = tr.querySelector('select[name="pc"]').value;
+        const vpn = tr.querySelector('input[name="vpn"]').checked;
+        const vpnOk = tr.querySelector('input[name="vpnOk"]').checked;
+        const obs = tr.querySelector('input[name="obs"]').value.trim();
+
+        const touched = exp || vehAsig || pc || vpn || vpnOk || obs.length>0;
+        if (!touched) return null;
+
         return {
-          nombre, cargo, idx,
-          experienciaDistribucion: tr.querySelector('input[name="exp"]').checked,
-          vehiculoAsignado: tr.querySelector('input[name="veh"]').checked,
-          computadora: tr.querySelector('select[name="pc"]').value,
-          vpn: tr.querySelector('input[name="vpn"]').checked,
-          vpnFuncional: tr.querySelector('input[name="vpnOk"]').checked,
+          nombre, cargo,
+          experienciaDistribucion: boolToSiNo(exp),
+          vehiculoAsignado: boolToSiNo(vehAsig),
+          computadora: pc || "",
+          vpn: boolToSiNo(vpn),
+          vpnFuncional: boolToSiNo(vpnOk),
+          observaciones: obs
         };
-      });
-      const payload = { proceso, vehiculosAsignadosProceso: veh, entries: rows };
+      }).filter(Boolean);
+
+      if (selected.length === 0) {
+        showToast('err', 'Nada que enviar', 'Marca al menos un colaborador.');
+        return;
+      }
+
+      const payload = { proceso, vehiculosAsignadosProceso: veh, entries: selected };
+      const body = new URLSearchParams({ payload: JSON.stringify(payload) }).toString();
+
+      showOverlay("Enviando información…");
       try {
-        estado.textContent = "Enviando…";
         const res = await fetch(GAS_BASE_URL, {
           method: "POST",
-          headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify(payload)
+          headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
+          body
         });
         const json = await res.json();
         if (json.ok) {
+          showToast('ok', 'Envío exitoso', 'Se guardaron ' + (json.inserted || selected.length) + ' filas.');
           estado.textContent = "¡Enviado correctamente! Código: " + json.id;
         } else {
           throw new Error(json.error || "Error desconocido");
         }
       } catch (e) {
+        showToast('err', 'No se pudo enviar', e.message);
         estado.textContent = "No se pudo enviar: " + e.message;
+      } finally {
+        hideOverlay();
       }
     });
 
-    // Inicia
+    // Init
     cargarProcesos();
   </script>
 </body>
