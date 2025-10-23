@@ -2,63 +2,68 @@
 <html lang="es">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Confirmación de disponibilidad</title>
   <style>
     :root { --bg:#0b1020; --card:#0f172a; --muted:#94a3b8; --text:#e5e7eb; --primary:#4f46e5; --primary-700:#4338ca; }
     * { box-sizing: border-box; }
-    body { margin:0; background:linear-gradient(180deg, #0b1020, #0b1020 40%, #0b132a); color:var(--text); font:14px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif; }
-    .container { max-width: 1100px; margin: 30px auto; padding: 0 16px; }
-    h1 { margin:0 0 8px; font-size: 22px; font-weight: 700; letter-spacing:.2px; }
-    .sub { color: var(--muted); margin-bottom: 18px; }
-    .card { background:var(--card); border:1px solid rgba(255,255,255,.06); border-radius:16px; padding:18px; box-shadow: 0 10px 30px rgba(0,0,0,.25); margin-bottom: 16px; }
-    label { display:block; margin: 6px 0 6px; font-weight:600; }
+    html, body { height: 100%; }
+    body { margin:0; background:linear-gradient(180deg, #0b1020, #0b1020 40%, #0b132a); color:var(--text); font:15px/1.5 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif; -webkit-font-smoothing:antialiased; }
+    .container { max-width: 1100px; margin: 24px auto; padding: 0 16px; }
+    h1 { margin:0 0 6px; font-size: clamp(18px, 3.4vw, 24px); font-weight: 700; letter-spacing:.2px; }
+    .sub { color: var(--muted); margin-bottom: 16px; font-size: clamp(12px, 2.5vw, 14px); }
+    .card { background:var(--card); border:1px solid rgba(255,255,255,.06); border-radius:16px; padding:16px; box-shadow: 0 10px 30px rgba(0,0,0,.25); margin-bottom: 14px; }
+    label { display:block; margin: 6px 0 6px; font-weight:600; font-size: 14px; }
     select, input[type="number"], input[type="text"] {
-      width: 100%; padding: 10px 12px; border:1px solid rgba(255,255,255,.12); background:#0b132a; color:var(--text);
-      border-radius:12px; outline: none;
+      width: 100%; padding: 12px 12px; border:1px solid rgba(255,255,255,.12); background:#0b132a; color:var(--text);
+      border-radius:12px; outline: none; font-size:16px;
     }
     select:focus, input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79,70,229,.18); }
-    .controls { display:flex; gap:12px; flex-wrap: wrap; }
-    .control { min-width: 260px; flex: 1 1 260px; }
-    .btn { cursor:pointer; border:0; border-radius:12px; padding:12px 16px; font-weight:700; transition: transform .04s ease, background .2s ease, opacity .2s;
-      background: var(--primary); color:white; }
+    .controls { display:grid; grid-template-columns: 1fr 240px; gap:12px; }
+    @media (max-width: 860px) { .controls { grid-template-columns: 1fr; } }
+    .btn { cursor:pointer; border:0; border-radius:12px; padding:14px 16px; font-weight:700; transition: transform .04s ease, background .2s ease, opacity .2s;
+      background: var(--primary); color:white; font-size:16px; }
     .btn:hover { background: var(--primary-700); }
     .btn:active { transform: translateY(1px); }
     .btn-ghost { background:transparent; border:1px solid rgba(255,255,255,.14); color: var(--text); }
-    .footer { display:flex; gap:12px; justify-content:flex-end; margin-top:16px; }
-    .muted { color: var(--muted); font-size:12px; }
-    .table-wrap { max-height: 60vh; overflow:auto; border: 1px solid rgba(255,255,255,.06); border-radius: 12px; }
+    .footer { display:flex; gap:12px; justify-content:flex-end; margin-top:12px; }
+    @media (max-width: 640px) { .footer { flex-direction: column; } .btn, .btn-ghost { width:100%; } }
+    .muted { color: var(--muted); font-size:13px; }
+    .table-wrap { max-height: 62vh; overflow:auto; border: 1px solid rgba(255,255,255,.06); border-radius: 12px; }
     table { width:100%; border-collapse: collapse; }
     th, td { padding: 10px; border-bottom: 1px solid rgba(255,255,255,.06); text-align:left; vertical-align: middle; }
     th { position: sticky; top:0; z-index:1; background: rgba(15,23,42,.98); backdrop-filter: blur(6px); }
-    .row-note { width: 220px; }
+    .row-note { width: 240px; max-width: 100%; }
+    input[type="checkbox"] { width: 20px; height: 20px; }
+    select { min-height: 44px; }
+    .toolbar { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:8px; flex-wrap: wrap; }
+    .search { display:flex; align-items:center; gap:8px; padding:8px 12px; border:1px solid rgba(255,255,255,.12); border-radius:999px; background:#0b132a; }
+    .search input { border:0; background:transparent; outline:none; color:var(--text); width: clamp(180px, 30vw, 280px); font-size: 16px; }
 
-    /* Overlay + spinners */
-    .overlay { position: fixed; inset:0; background: rgba(0,0,0,.56); display:none; align-items:center; justify-content:center; z-index: 50; }
+    .overlay { position: fixed; inset:0; background: rgba(0,0,0,.56); display:none; align-items:center; justify-content:center; z-index: 50; padding: 16px; }
     .overlay.show { display:flex; }
-    .overlay-box { display:flex; align-items:center; gap:14px; background: rgba(15,23,42,.92); border:1px solid rgba(255,255,255,.08); padding:18px 20px; border-radius:14px; box-shadow: 0 10px 30px rgba(0,0,0,.35); }
+    .overlay-box { display:flex; align-items:center; gap:14px; background: rgba(15,23,42,.92); border:1px solid rgba(255,255,255,.08); padding:18px 20px; border-radius:14px; box-shadow: 0 10px 30px rgba(0,0,0,.35); max-width: 92vw; }
     .spinner { width:42px; height:42px; border-radius:50%; border:3px solid rgba(255,255,255,.15); border-top-color: var(--primary); animation: spin 1s linear infinite; }
     .spinner-sm { width:22px; height:22px; border-radius:50%; border:2px solid rgba(255,255,255,.15); border-top-color: var(--primary); animation: spin 1s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
     .section-loading { display:flex; align-items:center; gap:10px; color:var(--muted); padding:8px 0; }
-    .toolbar { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:8px; }
-    .search { display:flex; align-items:center; gap:8px; padding:8px 12px; border:1px solid rgba(255,255,255,.12); border-radius:999px; background:#0b132a; }
-    .search input { border:0; background:transparent; outline:none; color:var(--text); width:220px; }
 
-    /* Toasts */
-    .toast-wrap { position: fixed; right:16px; bottom:16px; display:flex; flex-direction:column; gap:10px; z-index:60; }
-    .toast { padding:12px 14px; border-radius:12px; box-shadow: 0 8px 24px rgba(0,0,0,.35); display:flex; align-items:flex-start; gap:10px; max-width: 360px; }
-    .toast.ok { background: rgba(16,185,129,.12); border:1px solid rgba(16,185,129,.35); }
-    .toast.err { background: rgba(239,68,68,.12); border:1px solid rgba(239,68,68,.35); }
-    .toast .title { font-weight:700; }
-    .toast .msg { font-size: 12px; color: var(--muted); }
-    .toast .dot { width:10px; height:10px; border-radius:50%; margin-top:4px; }
-    .toast.ok .dot { background: #10b981; } .toast.err .dot { background: #ef4444; }
+    /* Responsive table -> cards */
+    @media (max-width: 760px) {
+      .table-wrap { border:none; }
+      table, thead, tbody, th, tr { display:block; }
+      thead { display:none; }
+      tbody { display:grid; gap:12px; }
+      tr { border:1px solid rgba(255,255,255,.10); background: rgba(15,23,42,.7); border-radius:12px; padding:10px; }
+      td { border:0; display:flex; justify-content:space-between; gap:12px; padding:6px 4px; }
+      td::before { content: attr(data-label); color: var(--muted); flex:0 0 52%; max-width: 52%; }
+      td:last-child { padding-bottom:2px; }
+      .row-note { width:100%; }
+    }
   </style>
 </head>
 <body>
-  <!-- Overlay central con mensaje dinámico -->
   <div class="overlay" id="overlay">
     <div class="overlay-box">
       <div class="spinner" aria-hidden="true"></div>
@@ -66,8 +71,7 @@
     </div>
   </div>
 
-  <!-- Toasts -->
-  <div class="toast-wrap" id="toasts"></div>
+  <div class="toast-wrap" id="toasts" style="position: fixed; right:16px; bottom:16px; display:flex; flex-direction:column; gap:10px; z-index:60;"></div>
 
   <div class="container">
     <h1>Confirmación de disponibilidad</h1>
@@ -77,13 +81,13 @@
       <div class="controls">
         <div class="control">
           <label for="procesoSelect">Proceso</label>
-          <select id="procesoSelect">
+          <select id="procesoSelect" aria-label="Proceso">
             <option value="">-- Seleccione --</option>
           </select>
         </div>
-        <div class="control" style="max-width:260px;">
+        <div class="control">
           <label for="vehiculosProceso">Vehículos asignados al proceso</label>
-          <input id="vehiculosProceso" type="number" min="0" step="1" placeholder="0" />
+          <input id="vehiculosProceso" type="number" inputmode="numeric" min="0" step="1" placeholder="0" aria-label="Vehículos asignados al proceso" />
         </div>
       </div>
       <div class="muted" id="estadoTop"></div>
@@ -91,9 +95,9 @@
 
     <div class="card">
       <div class="toolbar">
-        <div class="search">
-          <span>🔎</span>
-          <input id="filtro" type="text" placeholder="Buscar por nombre/cargo..." />
+        <div class="search" role="search">
+          <span aria-hidden="true">🔎</span>
+          <input id="filtro" type="text" placeholder="Buscar por nombre/cargo..." aria-label="Buscar" />
         </div>
         <div class="muted" id="contador">0 filas con datos</div>
       </div>
@@ -129,7 +133,6 @@
   </div>
 
   <script>
-    // ⬇️ Pega aquí tu URL del Web App
     const GAS_BASE_URL = "https://script.google.com/macros/s/AKfycbyaPCdh7SZ86VBXA5coGnbXbMnACCo4iirlPPVCxq41wKuZqcl1M_3Wc66EtE1GkQ76gA/exec";
 
     const procesoSelect = document.getElementById('procesoSelect');
@@ -149,20 +152,29 @@
 
     const state = { personal: [], rows: [] };
 
-    // Helpers UI
-    function showOverlay(text) {
-      if (text) overlayText.textContent = text;
-      overlay.classList.add('show');
-    }
-    function hideOverlay() {
-      overlay.classList.remove('show');
-    }
+    function showOverlay(text) { if (text) overlayText.textContent = text; overlay.classList.add('show'); }
+    function hideOverlay() { overlay.classList.remove('show'); }
+
     function showToast(kind, title, msg) {
       const el = document.createElement('div');
-      el.className = 'toast ' + (kind === 'ok' ? 'ok' : 'err');
-      el.innerHTML = '<div class="dot"></div><div><div class="title">'+title+'</div><div class="msg">'+(msg||'')+'</div></div>';
+      el.style.padding = '12px 14px';
+      el.style.borderRadius = '12px';
+      el.style.boxShadow = '0 8px 24px rgba(0,0,0,.35)';
+      el.style.display = 'flex';
+      el.style.alignItems = 'flex-start';
+      el.style.gap = '10px';
+      el.style.maxWidth = '360px';
+      el.style.border = '1px solid';
+      if (kind === 'ok') { el.style.background = 'rgba(16,185,129,.12)'; el.style.borderColor = 'rgba(16,185,129,.35)'; }
+      else { el.style.background = 'rgba(239,68,68,.12)'; el.style.borderColor = 'rgba(239,68,68,.35)'; }
+      const dot = document.createElement('div'); dot.style.width='10px'; dot.style.height='10px'; dot.style.borderRadius='50%'; dot.style.marginTop='4px'; dot.style.background = (kind==='ok')? '#10b981':'#ef4444';
+      const box = document.createElement('div');
+      const t = document.createElement('div'); t.textContent = title; t.style.fontWeight='700';
+      const m = document.createElement('div'); m.textContent = msg || ''; m.style.fontSize='12px'; m.style.color='#94a3b8';
+      box.appendChild(t); box.appendChild(m);
+      el.appendChild(dot); el.appendChild(box);
       toasts.appendChild(el);
-      setTimeout(() => { el.style.opacity = '0'; setTimeout(() => toasts.removeChild(el), 250); }, 3500);
+      setTimeout(() => { el.style.opacity='0'; setTimeout(() => toasts.removeChild(el), 250); }, 3500);
     }
     function boolToSiNo(v){ return v ? "Sí" : "No"; }
 
@@ -184,20 +196,20 @@
       data.forEach(p => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td>${p.nombre}</td>
-          <td>${p.cargo || ""}</td>
-          <td><input type="checkbox" name="exp" /></td>
-          <td><input type="checkbox" name="veh" /></td>
-          <td>
-            <select name="pc">
+          <td data-label="Nombre">${p.nombre}</td>
+          <td data-label="Cargo">${p.cargo || ""}</td>
+          <td data-label="Experiencia en distribución"><input type="checkbox" name="exp" /></td>
+          <td data-label="Vehículo asignado"><input type="checkbox" name="veh" /></td>
+          <td data-label="Computadora">
+            <select name="pc" aria-label="Computadora">
               <option value="">--</option>
               <option value="Desktop">Desktop</option>
               <option value="Portátil">Portátil</option>
             </select>
           </td>
-          <td><input type="checkbox" name="vpn" /></td>
-          <td><input type="checkbox" name="vpnOk" disabled /></td>
-          <td><input type="text" name="obs" placeholder="Notas u observaciones..." class="row-note" /></td>
+          <td data-label="VPN"><input type="checkbox" name="vpn" /></td>
+          <td data-label="VPN funcional"><input type="checkbox" name="vpnOk" disabled /></td>
+          <td data-label="Observaciones"><input type="text" name="obs" placeholder="Notas u observaciones..." class="row-note" /></td>
         `;
         const vpn = tr.querySelector('input[name="vpn"]');
         const vpnOk = tr.querySelector('input[name="vpnOk"]');
@@ -213,11 +225,9 @@
       updateContador();
     }
 
-    // Carga inicial de procesos (overlay "Cargando información…")
     async function cargarProcesos() {
       try {
         showOverlay("Cargando información…");
-        estadoTop.textContent = "";
         const res = await fetch(GAS_BASE_URL + "?action=procesos");
         const json = await res.json();
         if (!json.ok) throw new Error(json.error || "Error consultando procesos");
@@ -234,7 +244,6 @@
       }
     }
 
-    // Cargar colaboradores por proceso (spinner de sección)
     async function cargarPersonalPorProceso(proceso) {
       try {
         sectionLoading.style.display = 'flex';
@@ -252,7 +261,6 @@
       }
     }
 
-    // Eventos UI
     procesoSelect.addEventListener('change', () => {
       const p = procesoSelect.value;
       if (p) cargarPersonalPorProceso(p);
@@ -275,11 +283,9 @@
       showToast('ok', 'Formulario restablecido', 'Se limpiaron los campos visibles.');
     });
 
-    // Enviar (overlay "Enviando información…")
     btnEnviar.addEventListener('click', async () => {
       const proceso = procesoSelect.value;
       if (!proceso) { alert("Seleccione un proceso"); return; }
-
       const veh = Number(vehiculosProceso.value || 0);
       const selected = Array.from(tbody.querySelectorAll('tr')).map((tr) => {
         const nombre = tr.children[0].textContent.trim();
@@ -290,10 +296,8 @@
         const vpn = tr.querySelector('input[name="vpn"]').checked;
         const vpnOk = tr.querySelector('input[name="vpnOk"]').checked;
         const obs = tr.querySelector('input[name="obs"]').value.trim();
-
         const touched = exp || vehAsig || pc || vpn || vpnOk || obs.length>0;
         if (!touched) return null;
-
         return {
           nombre, cargo,
           experienciaDistribucion: boolToSiNo(exp),
@@ -304,38 +308,20 @@
           observaciones: obs
         };
       }).filter(Boolean);
-
-      if (selected.length === 0) {
-        showToast('err', 'Nada que enviar', 'Marca al menos un colaborador.');
-        return;
-      }
-
+      if (selected.length === 0) { showToast('err', 'Nada que enviar', 'Marca al menos un colaborador.'); return; }
       const payload = { proceso, vehiculosAsignadosProceso: veh, entries: selected };
       const body = new URLSearchParams({ payload: JSON.stringify(payload) }).toString();
-
       showOverlay("Enviando información…");
       try {
-        const res = await fetch(GAS_BASE_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
-          body
-        });
+        const res = await fetch(GAS_BASE_URL, { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" }, body });
         const json = await res.json();
-        if (json.ok) {
-          showToast('ok', 'Envío exitoso', 'Se guardaron ' + (json.inserted || selected.length) + ' filas.');
-          estado.textContent = "¡Enviado correctamente! Código: " + json.id;
-        } else {
-          throw new Error(json.error || "Error desconocido");
-        }
+        if (json.ok) { showToast('ok', 'Envío exitoso', 'Se guardaron ' + (json.inserted || selected.length) + ' filas.'); estado.textContent = "¡Enviado correctamente! Código: " + json.id; }
+        else { throw new Error(json.error || "Error desconocido"); }
       } catch (e) {
-        showToast('err', 'No se pudo enviar', e.message);
-        estado.textContent = "No se pudo enviar: " + e.message;
-      } finally {
-        hideOverlay();
-      }
+        showToast('err', 'No se pudo enviar', e.message); estado.textContent = "No se pudo enviar: " + e.message;
+      } finally { hideOverlay(); }
     });
 
-    // Init
     cargarProcesos();
   </script>
 </body>
