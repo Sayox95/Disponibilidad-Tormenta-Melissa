@@ -49,7 +49,6 @@
 
     .section-loading { display:flex; align-items:center; gap:10px; color:var(--muted); padding:8px 0; }
 
-    /* Responsive table -> cards */
     @media (max-width: 760px) {
       .table-wrap { border:none; }
       table, thead, tbody, th, tr { display:block; }
@@ -61,6 +60,18 @@
       td:last-child { padding-bottom:2px; }
       .row-note { width:100%; }
     }
+
+    .toast-center {
+      position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%);
+      background: rgba(15,23,42,.94); border:1px solid rgba(255,255,255,.08);
+      padding: 16px 18px; border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,.40);
+      z-index: 70; max-width: 92vw; display:flex; align-items:center; gap:12px;
+      opacity: 0; animation: fadeInOut 2.6s ease forwards;
+    }
+    .toast-center .dot { width:10px; height:10px; border-radius:50%; background:#10b981; }
+    .toast-center .title { font-weight: 800; }
+    .toast-center .msg { color: var(--muted); font-size: 13px; }
+    @keyframes fadeInOut { 0%{opacity:0; transform:translate(-50%,-46%);} 12%{opacity:1; transform:translate(-50%,-50%);} 80%{opacity:1;} 100%{opacity:0; transform:translate(-50%,-54%);} }
   </style>
 </head>
 <body>
@@ -75,7 +86,7 @@
 
   <div class="container">
     <h1>Confirmación de disponibilidad</h1>
-    <div class="sub">Seleccione el proceso para comenzar. LLenar los campos solicitados.</div>
+    <div class="sub">Complete la información por proceso y por colaborador. El envío guardará cada fila en Google Sheets.</div>
 
     <div class="card">
       <div class="controls">
@@ -176,6 +187,15 @@
       toasts.appendChild(el);
       setTimeout(() => { el.style.opacity='0'; setTimeout(() => toasts.removeChild(el), 250); }, 3500);
     }
+
+    function showCenterSuccessToast(title, msg) {
+      const t = document.createElement('div');
+      t.className = 'toast-center';
+      t.innerHTML = '<div class="dot"></div><div><div class="title">'+title+'</div><div class="msg">'+(msg||'')+'</div></div>';
+      document.body.appendChild(t);
+      setTimeout(() => document.body.removeChild(t), 2600);
+    }
+
     function boolToSiNo(v){ return v ? "Sí" : "No"; }
 
     function updateContador() {
@@ -223,6 +243,17 @@
         state.rows.push(tr);
       });
       updateContador();
+    }
+
+    function resetFormulario() {
+      procesoSelect.value = "";
+      vehiculosProceso.value = "";
+      filtro.value = "";
+      state.personal = [];
+      renderRows([]);
+      contador.textContent = "0 filas con datos";
+      estado.textContent = "";
+      estadoTop.textContent = "";
     }
 
     async function cargarProcesos() {
@@ -308,18 +339,36 @@
           observaciones: obs
         };
       }).filter(Boolean);
-      if (selected.length === 0) { showToast('err', 'Nada que enviar', 'Marca al menos un colaborador.'); return; }
+
+      if (selected.length === 0) {
+        showToast('err', 'Nada que enviar', 'Marca al menos un colaborador.');
+        return;
+      }
+
       const payload = { proceso, vehiculosAsignadosProceso: veh, entries: selected };
       const body = new URLSearchParams({ payload: JSON.stringify(payload) }).toString();
+
       showOverlay("Enviando información…");
       try {
-        const res = await fetch(GAS_BASE_URL, { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" }, body });
+        const res = await fetch(GAS_BASE_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
+          body
+        });
         const json = await res.json();
-        if (json.ok) { showToast('ok', 'Envío exitoso', 'Se guardaron ' + (json.inserted || selected.length) + ' filas.'); estado.textContent = "¡Enviado correctamente! Código: " + json.id; }
-        else { throw new Error(json.error || "Error desconocido"); }
+        if (json.ok) {
+          showCenterSuccessToast('¡Envío exitoso!', 'Se guardaron ' + (json.inserted || selected.length) + ' filas.');
+          estado.textContent = "¡Enviado correctamente! Código: " + json.id;
+          resetFormulario();
+        } else {
+          throw new Error(json.error || "Error desconocido");
+        }
       } catch (e) {
-        showToast('err', 'No se pudo enviar', e.message); estado.textContent = "No se pudo enviar: " + e.message;
-      } finally { hideOverlay(); }
+        showToast('err', 'No se pudo enviar', e.message);
+        estado.textContent = "No se pudo enviar: " + e.message;
+      } finally {
+        hideOverlay();
+      }
     });
 
     cargarProcesos();
